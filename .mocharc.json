@@ -1,0 +1,8 @@
+{
+  "recursive": true,
+  "extension": [
+    "js",
+    "cjs",
+    "mjs"
+  ]
+}
