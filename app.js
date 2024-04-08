@@ -11,14 +11,13 @@ import {
   updateKboOrg,
   getAllAbbKboOrganizations,
 } from "./lib/queries";
+import { CRON_PATTERN } from "./config";
+import { API_STATUS_CODES } from "./api-error-handler";
 import {
-  CRON_PATTERN,
-  ORGANIZATION_STATUS,
+  getKboFields,
   WEGWIJS_API,
   WEGWIJS_API_FIELDS,
-} from "./config";
-import { API_STATUS_CODES } from "./api-error-handler";
-import { WEGWIJS_DATA_OBJECT_IDS } from "./wegwijs-object-data-ids";
+} from "./lib/wegwijs-api";
 
 app.post("/sync-kbo-data/:kboStructuredIdUuid", async function (req, res) {
   try {
@@ -52,10 +51,9 @@ app.post("/sync-kbo-data/:kboStructuredIdUuid", async function (req, res) {
         abbOrganizationInfo.kboId,
         abbOrganizationInfo.adminUnit
       );
-
     }
-    
-    if (isUpdateNeeded(kboObject, kboIdentifiers)) {
+
+    if (isUpdateNeeded(kboObject?.changeTime, kboIdentifiers?.changeTime)) {
       await updateKboOrg(kboObject, kboIdentifiers);
     }
 
@@ -72,97 +70,12 @@ app.post("/sync-kbo-data/:kboStructuredIdUuid", async function (req, res) {
       }
       await updateOvoNumberAndUri(ovoStructuredIdUri, wegwijsOvo);
     }
-     
+
     return setServerStatus(API_STATUS_CODES.OK, res); // since we await, it should be 200
   } catch (e) {
     return setServerStatus(API_STATUS_CODES.CUSTOM_SERVER_ERROR, res, e);
   }
 });
-
-function getKboFields(data) {
-  const {
-    changeTime,
-    shortName,
-    ovoNumber,
-    kboNumber,
-    labels = [],
-    contacts = [],
-    organisationClassifications = [],
-    locations = [],
-  } = data;
-
-  //no labels = undefined
-  //formal name according to KBO
-  let formalName = extractObjectData(
-    labels,
-    WEGWIJS_DATA_OBJECT_IDS.LABELS
-  )?.value;
-  let email = extractObjectData(
-    contacts,
-    WEGWIJS_DATA_OBJECT_IDS.CONTACTS.EMAIL
-  )?.value;
-  let phone = extractObjectData(
-    contacts,
-    WEGWIJS_DATA_OBJECT_IDS.CONTACTS.PHONE
-  )?.value;
-  let website = extractObjectData(
-    contacts,
-    WEGWIJS_DATA_OBJECT_IDS.CONTACTS.WEBSITE
-  )?.value;
-
-  //main location according to KBO
-  let formattedAddress = extractObjectData(
-    locations,
-    WEGWIJS_DATA_OBJECT_IDS.ADDRESS
-  )?.formattedAddress;
-  let adressComponent = extractObjectData(
-    locations,
-    WEGWIJS_DATA_OBJECT_IDS.ADDRESS
-  )?.components;
-
-  let rechtsvorm = organisationClassifications?.find((fields) => {
-    return (
-      fields[WEGWIJS_DATA_OBJECT_IDS.RECHTSVORM.NAME] ===
-        WEGWIJS_DATA_OBJECT_IDS.RECHTSVORM.ID_1 ||
-      fields.organisationClassificationTypeId ===
-        WEGWIJS_DATA_OBJECT_IDS.RECHTSVORM.ID_2
-    );
-  })?.organisationClassificationName;
-
-  let startDate = labels?.find((fields) => {
-    return (
-      fields[WEGWIJS_DATA_OBJECT_IDS.LABELS.NAME] ===
-      WEGWIJS_DATA_OBJECT_IDS.LABELS.ID
-    );
-  })?.validity?.start;
-
-  let activeState = labels?.find((fields) => {
-    return (
-      fields[WEGWIJS_DATA_OBJECT_IDS.LABELS.NAME] ===
-        WEGWIJS_DATA_OBJECT_IDS.LABELS.ID &&
-      !fields.validity.hasOwnProperty("end")
-    );
-  })
-    ? ORGANIZATION_STATUS.ACTIVE
-    : ORGANIZATION_STATUS.INACTIVE;
-
-  //currently no commercial name available
-  return {
-    changeTime,
-    shortName,
-    ovoNumber,
-    kboNumber,
-    formalName,
-    startDate,
-    activeState,
-    rechtsvorm,
-    email,
-    phone,
-    website,
-    formattedAddress,
-    adressComponent,
-  };
-}
 
 new CronJob(
   CRON_PATTERN,
@@ -217,7 +130,9 @@ async function healAbbWithWegWijsData() {
           );
         }
 
-        if (isUpdateNeeded(wegwijsKboOrg, kboIdentifierOP)) {
+        if (
+          isUpdateNeeded(wegwijsKboOrg?.changeTime, kboIdentifierOP?.changeTime)
+        ) {
           const kboIdentifiers = await getKboOrganizationInfo(
             kboIdentifierOP.abbOrg
           );
@@ -255,12 +170,17 @@ async function getAllOvoAndKboCouplesWegwijs() {
   return couples;
 }
 
-function isUpdateNeeded(kboWegwijs, kboAbb) {
+/**
+ * Check if the Wegwijs data is more recent than the ABB data
+ * @param {string | undefined} wegwijsChangeTime
+ * @param {string | undefined} abbChangeTime
+ * @returns {Boolean}
+ */
+function isUpdateNeeded(wegwijsChangeTime, abbChangeTime) {
   let update = false;
-  if (kboWegwijs?.changeTime && kboAbb?.changeTime) {
+  if (wegwijsChangeTime && abbChangeTime) {
     update =
-      new Date(kboWegwijs.changeTime).getTime() >
-      new Date(kboAbb.changeTime).getTime();
+      new Date(wegwijsChangeTime).getTime() > new Date(abbChangeTime).getTime();
   }
   return update;
 }
@@ -275,12 +195,6 @@ function setServerStatus(statusCode, res, message) {
     console.log("Something went wrong while calling /sync-from-kbo", message);
   }
   return res.status(statusCode.CODE).send(statusCode.STATUS);
-}
-
-function extractObjectData(array, field) {
-  return array?.find((fields) => {
-    return fields[field.NAME] === field.ID;
-  });
 }
 
 app.use(errorHandler);
