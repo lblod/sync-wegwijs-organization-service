@@ -5,8 +5,7 @@ import {
   getAbbOrganizationInfo,
   constructOvoStructure,
   updateOvoNumberAndUri,
-  createNewKboOrg,
-  linkAbbOrgToKboOrg,
+  createKboOrg,
   getKboOrganizationInfo,
   updateKboOrg,
   getAllAbbKboOrganizations,
@@ -41,24 +40,24 @@ app.post("/sync-kbo-data/:kboStructuredIdUuid", async function (req, res) {
     }
     // We got a match on the KBO, getting the associated OVO back
     const wegwijsInfo = data[0]; // Wegwijs should only have only one entry per KBO
-    const kboObject = getKboFields(wegwijsInfo);
-    const kboIdentifiers = await getKboOrganizationInfo(
-      abbOrganizationInfo.adminUnit
+    const kboFields = getKboFields(wegwijsInfo);
+    const kboOrganizationInfo = await getKboOrganizationInfo(
+      abbOrganizationInfo.abbOrgUri
     );
 
-    if (!kboIdentifiers && kboObject) {
-      await createKbo(
-        kboObject,
+    if (!kboOrganizationInfo && kboFields) {
+      await createKboOrg(
+        kboFields,
         abbOrganizationInfo.kboId,
-        abbOrganizationInfo.adminUnit
+        abbOrganizationInfo.abbOrgUri
       );
     }
 
-    if (isUpdateNeeded(kboObject?.changeTime, kboIdentifiers?.changeTime)) {
-      await updateKboOrg(kboObject, kboIdentifiers);
+    if (isUpdateNeeded(kboFields?.changeTime, kboOrganizationInfo?.modified)) {
+      await updateKboOrg(kboFields, kboOrganizationInfo);
     }
 
-    let wegwijsOvo = kboObject.ovoNumber ?? null;
+    let wegwijsOvo = kboFields.ovoNumber ?? null;
 
     //Update Ovo Number
     if (wegwijsOvo && wegwijsOvo != abbOrganizationInfo.ovo) {
@@ -99,10 +98,10 @@ async function healAbbWithWegWijsData() {
   try {
     console.log("Healing wegwijs info starting...");
     const kboIdentifiersOP = await getAllAbbKboOrganizations();
-    const kboIdentifiersWegwijs = await getAllOvoAndKboCouplesWegwijs();
+    const allWegwijsOrganisations = await getAllWegwijsOrganisations();
 
     for (const kboIdentifierOP of kboIdentifiersOP) {
-      const wegwijsKboOrg = kboIdentifiersWegwijs[kboIdentifierOP.kbo];
+      const wegwijsKboOrg = allWegwijsOrganisations[kboIdentifierOP.kbo];
       if (wegwijsKboOrg) {
         const wegwijsOvo = wegwijsKboOrg.ovoNumber;
         // If a KBO can't be found in wegwijs but we already have an OVO for it in OP, we keep that OVO.
@@ -124,7 +123,7 @@ async function healAbbWithWegWijsData() {
         }
 
         if (!kboIdentifierOP?.kboOrg) {
-          await createKbo(
+          await createKboOrg(
             wegwijsKboOrg,
             kboIdentifierOP.kboId,
             kboIdentifierOP.abbOrg
@@ -147,8 +146,13 @@ async function healAbbWithWegWijsData() {
   }
 }
 
-async function getAllOvoAndKboCouplesWegwijs() {
-  let couples = {};
+/**
+ * Get all organisations from Wegwijs
+ * @typedef {Object.<string, KboFields>} Organisations
+ * @returns {Promise<Organisations>} - Object containing all organisations from Wegwijs indexed by KBO number
+ */
+async function getAllWegwijsOrganisations() {
+  let organisations = {};
 
   const response = await fetch(
     `${WEGWIJS_API}?q=kboNumber:/.*[0-9].*/&fields=${WEGWIJS_API_FIELDS},parents&scroll=true`
@@ -159,21 +163,16 @@ async function getAllOvoAndKboCouplesWegwijs() {
   let data = await response.json();
 
   do {
-    data.forEach((unit) => {
-      const wegwijsUnit = getKboFields(unit);
-      couples[wegwijsUnit.kboNumber] = wegwijsUnit;
+    data.forEach((organisation) => {
+      const kboFields = getKboFields(organisation);
+      organisations[kboFields.kboNumber] = kboFields;
     });
 
     const response = await fetch(`${WEGWIJS_API}/scroll?id=${scrollId}`);
     data = await response.json();
   } while (data.length);
 
-  return couples;
-}
-
-async function createKbo(wegwijsKboOrg, kboId, abbOrg) {
-  let newKboOrgUri = await createNewKboOrg(wegwijsKboOrg, kboId);
-  await linkAbbOrgToKboOrg(abbOrg, newKboOrgUri);
+  return organisations;
 }
 
 function setServerStatus(statusCode, res, message) {
