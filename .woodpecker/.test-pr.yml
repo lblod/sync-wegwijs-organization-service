@@ -1,0 +1,12 @@
+pipeline:
+  install:
+    image: node:18
+    commands:
+      - npm i
+  test:
+    image: node:18
+    commands:
+      - npm test
+when:
+  event:
+    - pull_request
