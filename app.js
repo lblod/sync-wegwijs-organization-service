@@ -14,9 +14,10 @@ import {
 import { CRON_PATTERN } from "./config";
 import { API_STATUS_CODES } from "./api-error-handler";
 import {
-  getKboFields,
   WEGWIJS_API,
   WEGWIJS_API_FIELDS,
+  getKboFields,
+  isUpdateNeeded,
 } from "./lib/wegwijs-api";
 
 app.post("/sync-kbo-data/:kboStructuredIdUuid", async function (req, res) {
@@ -168,21 +169,6 @@ async function getAllOvoAndKboCouplesWegwijs() {
   } while (data.length);
 
   return couples;
-}
-
-/**
- * Check if the Wegwijs data is more recent than the ABB data
- * @param {string | undefined} wegwijsChangeTime
- * @param {string | undefined} abbChangeTime
- * @returns {Boolean}
- */
-function isUpdateNeeded(wegwijsChangeTime, abbChangeTime) {
-  let update = false;
-  if (wegwijsChangeTime && abbChangeTime) {
-    update =
-      new Date(wegwijsChangeTime).getTime() > new Date(abbChangeTime).getTime();
-  }
-  return update;
 }
 
 async function createKbo(wegwijsKboOrg, kboId, abbOrg) {

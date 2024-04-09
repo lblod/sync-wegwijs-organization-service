@@ -17,6 +17,7 @@ import {
   extractAddress,
   extractRechtsvorm,
   findObjectByFieldValue,
+  isUpdateNeeded,
 } from "../../lib/wegwijs-api.js";
 
 describe("Wegwijs API", () => {
@@ -162,6 +163,28 @@ describe("Wegwijs API", () => {
         ID: "value3",
       });
       assert.deepStrictEqual(result, { key1: "value3", key2: "value4" });
+    });
+  });
+
+  describe("isUpdateNeeded", () => {
+    it("should return true when the changeTime is more recent", () => {
+      const result = isUpdateNeeded("2023-11-15", "2022-11-15");
+      assert.strictEqual(result, true);
+    });
+
+    it("should return false when the changeTime is older", () => {
+      const result = isUpdateNeeded("2022-11-15", "2023-11-15");
+      assert.strictEqual(result, false);
+    });
+
+    it("should return false when the changeTime is the same", () => {
+      const result = isUpdateNeeded("2023-11-15", "2023-11-15");
+      assert.strictEqual(result, false);
+    });
+
+    it("should return true when the changeTime is missing", () => {
+      const result = isUpdateNeeded("2023-11-15", undefined);
+      assert.strictEqual(result, true);
     });
   });
 });
