@@ -1,10 +1,14 @@
 pipeline:
   install:
-    image: node:18
+    image: node:20
     commands:
       - npm i
+  lint:
+    image: node:20
+    commands:
+      - npm run lint
   test:
-    image: node:18
+    image: node:20
     commands:
       - npm test
 when:
