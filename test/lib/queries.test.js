@@ -1,11 +1,33 @@
 import assert from "assert";
 import esmock from "esmock";
+import sinon from "sinon";
+import {
+  buildKboAddressQueryFull,
+  buildKboAddressQueryDefault,
+  buildContactPointQueryFull,
+  buildContactPointQueryDefault,
+  buildKboOrgQueryFull,
+  buildKboOrgQueryDefault,
+  buildUpdateQueryFull,
+  buildUpdateQueryDefault,
+  updateKboOrgFullAddress,
+  updateKboOrgFullContactPoint,
+  updateKboOrgFullKboOrganisation,
+  updateKboOrgDefaultAddress,
+  updateKboOrgDefaultContactPoint,
+  updateKboOrgDefaultKboOrganisation,
+} from "./queries.data.js";
 
+const querySudoStub = sinon.stub();
+const updateSudoStub = sinon.stub();
+
+// Stub `mu-auth-sudo` module and `mu` module part of `mu-semtech/mu-javascript-template` microservice
 const {
   buildKboAddressQuery,
   buildContactPointQuery,
   buildKboOrgQuery,
   buildUpdateQuery,
+  updateKboOrg,
 } = await esmock.strict(
   "../../lib/queries.js",
   {
@@ -21,20 +43,8 @@ const {
       },
     },
     "@lblod/mu-auth-sudo": {
-      querySudo: async () => {
-        return {
-          results: {
-            bindings: [],
-          },
-        };
-      },
-      updateSudo: async () => {
-        return {
-          results: {
-            bindings: [],
-          },
-        };
-      },
+      querySudo: querySudoStub,
+      updateSudo: updateSudoStub,
     },
   },
   {},
@@ -46,10 +56,10 @@ const {
 const normalize = (str) => str.replace(/\s+/g, " ").trim();
 
 describe("Queries", () => {
-  // buildKboAddressQuery
-  // buildContactPointQuery
-  // buildKboOrgQuery
-  // createKboOrg
+  afterEach(() => {
+    querySudoStub.reset();
+    updateSudoStub.reset();
+  });
 
   describe("buildKboAddressQuery", () => {
     it("should return the correct query", () => {
@@ -60,12 +70,7 @@ describe("Queries", () => {
       );
       assert.strictEqual(
         normalize(result),
-        normalize(`
-        <http://addressUri> a <http://www.w3.org/ns/locn#Address> ;
-            <http://mu.semte.ch/vocabularies/core/uuid> """addressUuid""" ;
-            <http://purl.org/dc/terms/source> <https://economie.fgov.be/> ;
-            <http://www.w3.org/ns/locn#fullAddress> """formattedAddress""" .
-        `)
+        normalize(buildKboAddressQueryFull)
       );
     });
 
@@ -73,11 +78,7 @@ describe("Queries", () => {
       const result = buildKboAddressQuery("http://addressUri", "addressUuid");
       assert.strictEqual(
         normalize(result),
-        normalize(`
-            <http://addressUri> a <http://www.w3.org/ns/locn#Address> ;
-                <http://mu.semte.ch/vocabularies/core/uuid> """addressUuid""" ;
-                <http://purl.org/dc/terms/source> <https://economie.fgov.be/> .
-            `)
+        normalize(buildKboAddressQueryDefault)
       );
     });
   });
@@ -96,16 +97,7 @@ describe("Queries", () => {
       );
       assert.strictEqual(
         normalize(result),
-        normalize(`
-        <http://contactPointUri> a <http://schema.org/ContactPoint> ;
-            <http://mu.semte.ch/vocabularies/core/uuid> """contactPointUuid""" ;
-            <http://purl.org/dc/terms/source> <https://economie.fgov.be/> ;
-            <http://schema.org/contactType> """Primary""" ;
-            <http://www.w3.org/ns/locn#address> <http://addressUri> ;
-            <http://schema.org/email> """aaa@bbb.com""" ;
-            <http://schema.org/telephone> """+32 2 123 45 67""" ;
-            <http://xmlns.com/foaf/0.1/page> """https://example.com""" .
-        `)
+        normalize(buildContactPointQueryFull)
       );
     });
 
@@ -118,13 +110,7 @@ describe("Queries", () => {
       );
       assert.strictEqual(
         normalize(result),
-        normalize(`
-            <http://contactPointUri> a <http://schema.org/ContactPoint> ;
-                <http://mu.semte.ch/vocabularies/core/uuid> """contactPointUuid""" ;
-                <http://purl.org/dc/terms/source> <https://economie.fgov.be/> ;
-                <http://schema.org/contactType> """Primary""" ;
-                <http://www.w3.org/ns/locn#address> <http://addressUri> .
-            `)
+        normalize(buildContactPointQueryDefault)
       );
     });
   });
@@ -148,21 +134,7 @@ describe("Queries", () => {
       );
       assert.strictEqual(
         normalize(result),
-        normalize(`
-        <http://kboOrgUri> a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
-            <http://mu.semte.ch/vocabularies/core/uuid> """kboOrgUuid""" 
-            <http://purl.org/dc/terms/source> <https://economie.fgov.be/> ; 
-            <http://www.w3.org/2002/07/owl#sameAs> <http://abbOrgUri> ; 
-            <http://schema.org/contactPoint> <http://contactPointUri> ; 
-            <http://www.w3.org/ns/adms#identifier> <http://kboIdentifierUri> ; 
-            <http://mu.semte.ch/vocabularies/ext/rechtsvorm> """Stad / gemeente""" ; 
-            <http://mu.semte.ch/vocabularies/ext/startDate> """1968-01-01""" ; 
-            <http://www.w3.org/ns/regorg#legalName> """formalName""" ; 
-            <http://www.w3.org/2004/02/skos/core#altLabel> """shortName""" ; 
-            <http://purl.org/dc/terms/modified> """2024-01-01""" ; 
-            <http://www.w3.org/ns/regorg#orgStatus> <activeState> .
-
-        `)
+        normalize(buildKboOrgQueryFull)
       );
     });
 
@@ -177,14 +149,7 @@ describe("Queries", () => {
       );
       assert.strictEqual(
         normalize(result),
-        normalize(`
-            <http://kboOrgUri> a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
-                <http://mu.semte.ch/vocabularies/core/uuid> """kboOrgUuid""" 
-                <http://purl.org/dc/terms/source> <https://economie.fgov.be/> ; 
-                <http://www.w3.org/2002/07/owl#sameAs> <http://abbOrgUri> ; 
-                <http://schema.org/contactPoint> <http://contactPointUri> ; 
-                <http://www.w3.org/ns/adms#identifier> <http://kboIdentifierUri> .
-            `)
+        normalize(buildKboOrgQueryDefault)
       );
     });
   });
@@ -201,34 +166,7 @@ describe("Queries", () => {
 
       assert.strictEqual(
         normalize(result),
-        normalize(`
-        DELETE { 
-          GRAPH ?g { 
-            ?s <http://purl.org/dc/terms/modified> ?o . 
-          } 
-        }
-        WHERE { 
-          VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> } 
-          GRAPH ?g { 
-            ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ;
-              <http://purl.org/dc/terms/modified> ?o .
-            BIND(<http://kboOrgUri> as ?s) 
-          } 
-        }
-        ;
-        INSERT { 
-          GRAPH ?g { 
-            ?s <http://purl.org/dc/terms/modified> """2024-01-01""" . 
-          } 
-        } 
-        WHERE { 
-          VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> } 
-          GRAPH ?g { 
-            ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> . 
-            BIND(<http://kboOrgUri> as ?s) 
-          } 
-        }
-        `)
+        normalize(buildUpdateQueryFull)
       );
     });
     it("should return the correct query when object is undefined", () => {
@@ -242,21 +180,74 @@ describe("Queries", () => {
 
       assert.strictEqual(
         normalize(result),
-        normalize(`
-        DELETE { 
-          GRAPH ?g { 
-            ?s <http://purl.org/dc/terms/modified> ?o . 
-          } 
+        normalize(buildUpdateQueryDefault)
+      );
+    });
+  });
+
+  describe("updateKboOrg", () => {
+    it("should return the correct query", async () => {
+      await updateKboOrg(
+        {
+          changeTime: "2023-11-15",
+          shortName: "Aalst",
+          ovoNumber: "OVO001992",
+          kboNumber: "0207437468",
+          formalName: "Stad Aalst",
+          startDate: "1968-01-01",
+          activeState: "active",
+          rechtsvorm: "Stad/Gemeente",
+          email: "info@aalst.be",
+          phone: "053 77 93 00",
+          website: "https://www.aalst.be",
+          formattedAddress: "Werf 9, 9300 Aalst, België",
+        },
+        {
+          addressUri: "http://addressUri",
+          contactPointUri: "http://contactPointUri",
+          kboOrgUri: "http://kboOrgUri",
         }
-        WHERE { 
-          VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> } 
-          GRAPH ?g { 
-            ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ;
-              <http://purl.org/dc/terms/modified> ?o .
-            BIND(<http://kboOrgUri> as ?s) 
-          } 
+      );
+
+      assert.strictEqual(updateSudoStub.callCount, 3);
+      assert.deepStrictEqual(
+        normalize(updateSudoStub.getCall(0).args[0]),
+        normalize(updateKboOrgFullAddress)
+      );
+      assert.deepStrictEqual(
+        normalize(updateSudoStub.getCall(1).args[0]),
+        normalize(updateKboOrgFullContactPoint)
+      );
+      assert.deepStrictEqual(
+        normalize(updateSudoStub.getCall(2).args[0]),
+        normalize(updateKboOrgFullKboOrganisation)
+      );
+    });
+
+    it("should return the correct query with empty kboFields", async () => {
+      await updateKboOrg(
+        {
+
+        },
+        {
+          addressUri: "http://addressUri",
+          contactPointUri: "http://contactPointUri",
+          kboOrgUri: "http://kboOrgUri",
         }
-        ;`)
+      );
+
+      assert.strictEqual(updateSudoStub.callCount, 3);
+      assert.deepStrictEqual(
+        normalize(updateSudoStub.getCall(0).args[0]),
+        normalize(updateKboOrgDefaultAddress)
+      );
+      assert.deepStrictEqual(
+        normalize(updateSudoStub.getCall(1).args[0]),
+        normalize(updateKboOrgDefaultContactPoint)
+      );
+      assert.deepStrictEqual(
+        normalize(updateSudoStub.getCall(2).args[0]),
+        normalize(updateKboOrgDefaultKboOrganisation)
       );
     });
   });
