@@ -32,7 +32,7 @@ export const buildContactPointQueryDefault = `
 
 export const buildKboOrgQueryFull = `
 <http://kboOrgUri> a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
-    <http://mu.semte.ch/vocabularies/core/uuid> """kboOrgUuid""" 
+    <http://mu.semte.ch/vocabularies/core/uuid> """kboOrgUuid""" ;
     <http://purl.org/dc/terms/source> <https://economie.fgov.be/> ; 
     <http://www.w3.org/2002/07/owl#sameAs> <http://abbOrgUri> ; 
     <http://schema.org/contactPoint> <http://contactPointUri> ; 
@@ -47,7 +47,7 @@ export const buildKboOrgQueryFull = `
 
 export const buildKboOrgQueryDefault = `
 <http://kboOrgUri> a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
-    <http://mu.semte.ch/vocabularies/core/uuid> """kboOrgUuid""" 
+    <http://mu.semte.ch/vocabularies/core/uuid> """kboOrgUuid""" ;
     <http://purl.org/dc/terms/source> <https://economie.fgov.be/> ; 
     <http://www.w3.org/2002/07/owl#sameAs> <http://abbOrgUri> ; 
     <http://schema.org/contactPoint> <http://contactPointUri> ; 
