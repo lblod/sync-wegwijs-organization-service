@@ -1,6 +1,6 @@
 /**
  * Represents the fields of the KBO organization.
- * @typedef {Object} KboFields
+ * @typedef {object} KboFields
  * @property {string} [changeTime] The change time of the data.
  * @property {string} [shortName] The short name of the organization.
  * @property {string} [ovoNumber] The OVO number of the organization.
@@ -15,3 +15,5 @@
  * @property {string} [formattedAddress] The formatted address of the organization.
  * @property {string} [adressComponent] The address components of the organization.
  */
+
+export {};

@@ -12,56 +12,54 @@ import {
 } from "./lib/queries";
 import { CRON_PATTERN } from "./config";
 import { API_STATUS_CODES } from "./api-error-handler";
-import {
-  WEGWIJS_API,
-  WEGWIJS_API_FIELDS,
-  getKboFields,
-  isUpdateNeeded,
-} from "./lib/wegwijs-api";
+import { getKboFields, isUpdateNeeded } from "./lib/wegwijs-api";
+
+const WEGWIJS_SEARCH_ORGANIZATION_API =
+  "https://api.wegwijs.vlaanderen.be/v1/search/organisations";
+const WEGWIJS_API_FIELDS =
+  "changeTime,name,shortName,ovoNumber,kboNumber,labels,contacts,organisationClassifications,locations";
 
 app.post("/sync-kbo-data/:kboStructuredIdUuid", async function (req, res) {
   try {
-    const kboStructuredIdUuid = req.params.kboStructuredIdUuid;
     const abbOrganizationInfo = await getAbbOrganizationInfo(
-      kboStructuredIdUuid
+      req.params.kboStructuredIdUuid
     );
 
     if (!abbOrganizationInfo?.kbo) {
       return setServerStatus(API_STATUS_CODES.STATUS_NO_DATA_OP, res);
     }
-    const wegwijsUrl = `${WEGWIJS_API}?q=kboNumber:${abbOrganizationInfo.kbo}&fields=${WEGWIJS_API_FIELDS}`;
-    console.log("url: " + wegwijsUrl);
 
-    const response = await fetch(wegwijsUrl);
-    const data = await response.json();
+    const kboFields = await getWegwijsOrganisation(
+      abbOrganizationInfo.kbo
+    );
 
-    if (!data.length) {
+    if (!kboFields) {
       return setServerStatus(API_STATUS_CODES.ERROR_NO_DATA_WEGWIJS, res);
     }
-    // We got a match on the KBO, getting the associated OVO back
-    const wegwijsInfo = data[0]; // Wegwijs should only have only one entry per KBO
-    const kboFields = getKboFields(wegwijsInfo);
+
     const kboOrganizationInfo = await getKboOrganizationInfo(
       abbOrganizationInfo.abbOrgUri
     );
 
-    if (!kboOrganizationInfo && kboFields) {
+    const isCreateNeeded = !kboOrganizationInfo && kboFields;
+    if (isCreateNeeded) {
       await createKboOrg(
         kboFields,
         abbOrganizationInfo.kboId,
         abbOrganizationInfo.abbOrgUri
       );
-    }
-
-    if (isUpdateNeeded(kboFields?.changeTime, kboOrganizationInfo?.modified)) {
+    } else if (
+      kboOrganizationInfo &&
+      isUpdateNeeded(kboFields?.changeTime, kboOrganizationInfo.modified)
+    ) {
       await updateKboOrg(kboFields, kboOrganizationInfo);
     }
 
-    let wegwijsOvo = kboFields.ovoNumber ?? null;
+    const wegwijsOvo = kboFields.ovoNumber;
 
     //Update Ovo Number
     if (wegwijsOvo && wegwijsOvo != abbOrganizationInfo.ovo) {
-      let ovoStructuredIdUri = abbOrganizationInfo.ovoStructuredId;
+      let ovoStructuredIdUri = abbOrganizationInfo.ovoStructuredIdUri;
 
       if (!ovoStructuredIdUri) {
         ovoStructuredIdUri = await constructOvoStructure(
@@ -93,7 +91,9 @@ new CronJob(
   null,
   true
 );
-
+/**
+ * Heal the ABB organizations with Wegwijs data
+ */
 async function healAbbWithWegWijsData() {
   try {
     console.log("Healing wegwijs info starting...");
@@ -147,15 +147,30 @@ async function healAbbWithWegWijsData() {
 }
 
 /**
+ * Get the organisation from Wegwijs
+ * @param {string} kboNumber - The KBO number
+ * @returns {Promise<import('./typedefs.js').KboFields>} - The KBO fields
+ */
+const getWegwijsOrganisation = async (kboNumber) => {
+  const url = `${WEGWIJS_SEARCH_ORGANIZATION_API}?q=kboNumber:${kboNumber}&fields=${WEGWIJS_API_FIELDS}`;
+  console.log("url: " + url);
+
+  const response = await fetch(url);
+  const data = await response.json();
+
+  return data.length ? getKboFields(data[0]) : null;
+};
+
+/**
  * Get all organisations from Wegwijs
- * @typedef {Object.<string, KboFields>} Organisations
+ * @typedef {{[key: string]: import('./typedefs.js').KboFields}} Organisations
  * @returns {Promise<Organisations>} - Object containing all organisations from Wegwijs indexed by KBO number
  */
-async function getAllWegwijsOrganisations() {
+const getAllWegwijsOrganisations = async () => {
   let organisations = {};
 
   const response = await fetch(
-    `${WEGWIJS_API}?q=kboNumber:/.*[0-9].*/&fields=${WEGWIJS_API_FIELDS},parents&scroll=true`
+    `${WEGWIJS_SEARCH_ORGANIZATION_API}?q=kboNumber:/.*[0-9].*/&fields=${WEGWIJS_API_FIELDS},parents&scroll=true`
   );
   const scrollId = JSON.parse(
     response.headers.get("x-search-metadata")
@@ -168,12 +183,14 @@ async function getAllWegwijsOrganisations() {
       organisations[kboFields.kboNumber] = kboFields;
     });
 
-    const response = await fetch(`${WEGWIJS_API}/scroll?id=${scrollId}`);
+    const response = await fetch(
+      `${WEGWIJS_SEARCH_ORGANIZATION_API}/scroll?id=${scrollId}`
+    );
     data = await response.json();
   } while (data.length);
 
   return organisations;
-}
+};
 
 function setServerStatus(statusCode, res, message) {
   if (statusCode.CODE === 500) {
