@@ -206,7 +206,16 @@ describe("Queries", () => {
           GRAPH ?g { 
             ?s <http://purl.org/dc/terms/modified> ?o . 
           } 
-        } 
+        }
+        WHERE { 
+          VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> } 
+          GRAPH ?g { 
+            ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ;
+              <http://purl.org/dc/terms/modified> ?o .
+            BIND(<http://kboOrgUri> as ?s) 
+          } 
+        }
+        ;
         INSERT { 
           GRAPH ?g { 
             ?s <http://purl.org/dc/terms/modified> """2024-01-01""" . 
@@ -216,7 +225,6 @@ describe("Queries", () => {
           VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> } 
           GRAPH ?g { 
             ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> . 
-            OPTIONAL { ?s <http://purl.org/dc/terms/modified> ?o .} 
             BIND(<http://kboOrgUri> as ?s) 
           } 
         }
@@ -235,20 +243,20 @@ describe("Queries", () => {
       assert.strictEqual(
         normalize(result),
         normalize(`
-            DELETE { 
-              GRAPH ?g { 
-                ?s <http://purl.org/dc/terms/modified> ?o . 
-              } 
-            } 
-            WHERE { 
-              VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> } 
-              GRAPH ?g { 
-                ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> . 
-                OPTIONAL { ?s <http://purl.org/dc/terms/modified> ?o .} 
-                BIND(<http://kboOrgUri> as ?s) 
-              } 
-            }
-            `)
+        DELETE { 
+          GRAPH ?g { 
+            ?s <http://purl.org/dc/terms/modified> ?o . 
+          } 
+        }
+        WHERE { 
+          VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> } 
+          GRAPH ?g { 
+            ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ;
+              <http://purl.org/dc/terms/modified> ?o .
+            BIND(<http://kboOrgUri> as ?s) 
+          } 
+        }
+        ;`)
       );
     });
   });
