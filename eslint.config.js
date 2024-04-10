@@ -19,6 +19,7 @@ export default [
     },
     rules: {
       "jsdoc/require-jsdoc": "off",
+      "jsdoc/require-returns": "off",
     },
   },
   {
