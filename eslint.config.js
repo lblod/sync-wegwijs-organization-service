@@ -18,6 +18,7 @@ export default [
       jsdoc,
     },
     rules: {
+      "jsdoc/check-types": "error",
       "jsdoc/require-jsdoc": "off",
       "jsdoc/require-returns": "off",
     },
