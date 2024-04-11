@@ -2,22 +2,25 @@
 
 <br />
 <div align="center">
-  <h1 align="center">sync-ovo-numbers-service</h1>
+  <h1 align="center">sync-wegwijs-api-service</h1>
   <p align="center">
-    Service that syncs OVO numbers of OP to match with those in Wegwijs.
+    Service sync wegwijs organizations data with OP 
     <br />
-    <a href="https://github.com/lblod/sync-ovo-numbers-service/issues">Report Bug</a>
+    <a href="https://github.com/lblod/sync-wegwijs-organization-service/issues">Report Bug</a>
     ·
-    <a href="https://github.com/lblod/sync-ovo-numbers-service/pulls">Open PR</a>
+    <a href="https://github.com/lblod/sync-wegwijs-organization-service/pulls">Open PR</a>
   </p>
 </div>
 
 
 ## 📖 Description
 
-This service maintains OP's OVO numbers in sync together with [Wegwijs](https://wegwijs.vlaanderen.be/#/organisations), which is the official source of OVO numbers.
+This service maintains OP's OVO numbers and KboOganisation in sync together with [Wegwijs](https://wegwijs.vlaanderen.be/#/organisations).
 
-It gets triggered when a KBO is added or updated in OP, as well as on a regular basis via a cron job to ensure our dataset is in sync with theirs.
+- OVO numbers are stored in `<https://data.vlaanderen.be/ns/generiek#GestructureerdeIdentificator>` and linked to ABB organizations via `<http://www.w3.org/ns/adms#identifier>`.
+- Wegwijs data are saved in `<http://mu.semte.ch/vocabularies/ext/KboOrganisatie>` and linked to ABB organizations via `<http://www.w3.org/2002/07/owl#sameAs>`.
+
+The service gets triggered when a KBO is added or updated in OP, as well as on a regular basis via a cron job to ensure our dataset is in sync with theirs.
 
 *Note: Wegwijs currently (03/10/2023) don't have all the KBOs added in their database. For this reason, the behaviour we follow when we can't find a match on a KBO between OP and them is to leave the OVO number of OP untouched if it exists.*
 
@@ -27,8 +30,8 @@ It gets triggered when a KBO is added or updated in OP, as well as on a regular 
 
 ### 🐋 Docker-compose.yml
 ```yaml
-  sync-ovo-numbers:
-    image: lblod/sync-ovo-numbers-service
+  sync-wegwijs-organization-service:
+    image: lblod/sync-wegwijs-organization-service
     links:
       - db:database
     labels:

@@ -3,7 +3,7 @@ import fetch from "node-fetch";
 import { CronJob } from "cron";
 import {
   getAbbOrganizationInfo,
-  constructOvoStructure,
+  createOvoStructure,
   updateOvoNumberAndUri,
   createKboOrg,
   getKboOrganizationInfo,
@@ -31,7 +31,7 @@ app.post("/sync-kbo-data/:kboStructuredIdUuid", async (req, res) => {
     }
 
     // Get KBO organization details from Wegwijs API
-    const kboFields = await getWegwijsOrganisation(abbOrganizationInfo.kbo);
+    const kboFields = await getWegwijsOrganization(abbOrganizationInfo.kbo);
 
     if (!kboFields) {
       return setServerStatus(API_STATUS_CODES.ERROR_NO_DATA_WEGWIJS, res);
@@ -113,7 +113,7 @@ const createOrUpdateOvoStructure = async (
   // It happens especially a lot for worship services that sometimes lack data in Wegwijs.
   if (wegwijsOvo && wegwijsOvo != abbOvo) {
     if (!ovoStructuredIdUri) {
-      ovoStructuredIdUri = await constructOvoStructure(kboStructuredIdUri);
+      ovoStructuredIdUri = await createOvoStructure(kboStructuredIdUri);
     }
     await updateOvoNumberAndUri(ovoStructuredIdUri, wegwijsOvo);
   }
@@ -126,7 +126,7 @@ async function healAbbWithWegWijsData() {
   try {
     console.log("Healing wegwijs info starting...");
     const allAbbKboOrganizations = await getAllAbbKboOrganizations();
-    const allWegwijsOrganisations = await getAllWegwijsOrganisations();
+    const allWegwijsOrganisations = await getAllWegwijsOrganizations();
 
     for (const abbOrganizationInfo of allAbbKboOrganizations) {
       const wegwijsKboFields = allWegwijsOrganisations[abbOrganizationInfo.kbo];
@@ -152,11 +152,11 @@ async function healAbbWithWegWijsData() {
 }
 
 /**
- * Get the organisation from Wegwijs
+ * Get the organization from Wegwijs
  * @param {string} kboNumber - The KBO number
  * @returns {Promise<import('./typedefs.js').KboFields>} - The KBO fields
  */
-const getWegwijsOrganisation = async (kboNumber) => {
+const getWegwijsOrganization = async (kboNumber) => {
   const url = `${WEGWIJS_SEARCH_ORGANIZATION_API}?q=kboNumber:${kboNumber}&fields=${WEGWIJS_API_FIELDS}`;
   console.log("url: " + url);
 
@@ -167,12 +167,12 @@ const getWegwijsOrganisation = async (kboNumber) => {
 };
 
 /**
- * Get all organisations from Wegwijs
- * @typedef {{[key: string]: import('./typedefs.js').KboFields}} Organisations
- * @returns {Promise<Organisations>} - Object containing all organisations from Wegwijs indexed by KBO number
+ * Get all organizations from Wegwijs
+ * @typedef {{[key: string]: import('./typedefs.js').KboFields}} Organizations
+ * @returns {Promise<Organizations>} - Object containing all organizations from Wegwijs indexed by KBO number
  */
-const getAllWegwijsOrganisations = async () => {
-  let organisations = {};
+const getAllWegwijsOrganizations = async () => {
+  let organizations = {};
 
   const response = await fetch(
     `${WEGWIJS_SEARCH_ORGANIZATION_API}?q=kboNumber:/.*[0-9].*/&fields=${WEGWIJS_API_FIELDS},parents&scroll=true`
@@ -183,9 +183,9 @@ const getAllWegwijsOrganisations = async () => {
   let data = await response.json();
 
   do {
-    data.forEach((organisation) => {
-      const kboFields = getKboFields(organisation);
-      organisations[kboFields.kboNumber] = kboFields;
+    data.forEach((organization) => {
+      const kboFields = getKboFields(organization);
+      organizations[kboFields.kboNumber] = kboFields;
     });
 
     const response = await fetch(
@@ -194,7 +194,7 @@ const getAllWegwijsOrganisations = async () => {
     data = await response.json();
   } while (data.length);
 
-  return organisations;
+  return organizations;
 };
 
 function setServerStatus(statusCode, res, message) {
