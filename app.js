@@ -19,6 +19,11 @@ const WEGWIJS_SEARCH_ORGANIZATION_API =
 const WEGWIJS_API_FIELDS =
   "changeTime,name,shortName,ovoNumber,kboNumber,labels,contacts,organisationClassifications,locations";
 
+/**
+ * Sync a specific organization with Wegwijs data
+ * @param {string} kboStructuredIdUuid - The KBO structured ID UUID
+ * @returns {Promise<void>}
+ */
 app.post("/sync-kbo-data/:kboStructuredIdUuid", async (req, res) => {
   try {
     // Get the ABB organization details
@@ -49,6 +54,20 @@ app.post("/sync-kbo-data/:kboStructuredIdUuid", async (req, res) => {
       abbOrganizationInfo.kboStructuredIdUri,
       abbOrganizationInfo.ovoStructuredIdUri
     );
+
+    return setServerStatus(API_STATUS_CODES.OK, res);
+  } catch (e) {
+    return setServerStatus(API_STATUS_CODES.CUSTOM_SERVER_ERROR, res, e);
+  }
+});
+
+/**
+ * Sync all Organizations with Wegwijs data
+ */
+app.post("/sync-all-kbo-data", async (req, res) => {
+  try {
+    console.log(`Wegwijs data healing triggered manually`);
+    await healAbbWithWegWijsData();
 
     return setServerStatus(API_STATUS_CODES.OK, res);
   } catch (e) {
