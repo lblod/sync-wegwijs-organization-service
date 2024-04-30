@@ -49,6 +49,7 @@ app.post("/sync-kbo-data/:kboStructuredIdUuid", async (req, res) => {
     );
 
     await createOrUpdateOvoStructure(
+      abbOrganizationInfo.abbOrgUri,
       kboFields.ovoNumber,
       abbOrganizationInfo.ovo,
       abbOrganizationInfo.kboStructuredIdUri,
@@ -117,12 +118,14 @@ const createOrUpdateKboOrg = async (abbOrgUri, kboIdentifierUri, kboFields) => {
 
 /**
  * Create or update the OVO structure
+ * @param {string} abbOrgUri - The ABB organization URI
  * @param {string} wegwijsOvo - The OVO number from Wegwijs
  * @param {string} abbOvo - The OVO number from ABB
  * @param {string} kboStructuredIdUri - The KBO structured ID URI
  * @param {string} ovoStructuredIdUri - The OVO structured ID URI
  */
 const createOrUpdateOvoStructure = async (
+  abbOrgUri,
   wegwijsOvo,
   abbOvo,
   kboStructuredIdUri,
@@ -132,9 +135,9 @@ const createOrUpdateOvoStructure = async (
   // It happens especially a lot for worship services that sometimes lack data in Wegwijs.
   if (wegwijsOvo && wegwijsOvo != abbOvo) {
     if (!ovoStructuredIdUri) {
-      ovoStructuredIdUri = await createOvoStructure(kboStructuredIdUri);
+      ovoStructuredIdUri = await createOvoStructure(abbOrgUri, kboStructuredIdUri);
     }
-    await updateOvoNumberAndUri(ovoStructuredIdUri, wegwijsOvo);
+    await updateOvoNumberAndUri(abbOrgUri, ovoStructuredIdUri, wegwijsOvo);
   }
 };
 
@@ -157,6 +160,7 @@ async function healAbbWithWegWijsData() {
         );
 
         await createOrUpdateOvoStructure(
+          abbOrganizationInfo.abbOrgUri,
           wegwijsKboFields.ovoNumber,
           abbOrganizationInfo.ovo,
           abbOrganizationInfo.kboStructuredIdUri,
