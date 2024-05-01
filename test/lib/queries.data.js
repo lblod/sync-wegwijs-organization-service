@@ -30,6 +30,20 @@ export const buildContactPointQueryDefault = `
     <http://www.w3.org/ns/locn#address> <http://addressUri> .
 `;
 
+export const buildKboIdentifierQueryFull = `
+<http://data.lblod.info/id/gestructureerdeIdentificator/1234567890> a <https://data.vlaanderen.be/ns/generiek#GestructureerdeIdentificator> ;
+  <http://mu.semte.ch/vocabularies/core/uuid> """1234567890""" ;
+  <http://purl.org/dc/terms/source> <https://economie.fgov.be/> ;
+  <https://data.vlaanderen.be/ns/generiek#lokaleIdentificator> """0207437468""" . 
+
+<http://kboIdentifierUri> a <http://www.w3.org/ns/adms#Identifier> ;
+  <http://mu.semte.ch/vocabularies/core/uuid> """kboIdentifierUuid""" ;
+  <http://purl.org/dc/terms/source> <https://economie.fgov.be/> ;
+  <http://www.w3.org/2004/02/skos/core#notation> """KBO nummer""" ;
+  <https://data.vlaanderen.be/ns/generiek#gestructureerdeIdentificator> <http://data.lblod.info/id/gestructureerdeIdentificator/1234567890> ; 
+  <http://www.w3.org/2002/07/owl#sameAs> <http://abbOrgKboIdentifierUri> .
+`;
+
 export const buildKboOrgQueryFull = `
 <http://kboOrgUri> a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
     <http://mu.semte.ch/vocabularies/core/uuid> """kboOrgUuid""" ;

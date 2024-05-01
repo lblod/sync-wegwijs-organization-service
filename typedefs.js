@@ -4,7 +4,7 @@
  * @property {string} [changeTime] The change time of the data.
  * @property {string} [shortName] The short name of the organization.
  * @property {string} [ovoNumber] The OVO number of the organization.
- * @property {string} [kboNumber] The KBO number of the organization.
+ * @property {string} kboNumber The KBO number of the organization.
  * @property {string} [formalName] The formal name of the organization.
  * @property {string} [startDate] The start date of the organization.
  * @property {string} [activeState] The active state of the organization.

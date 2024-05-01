@@ -6,6 +6,7 @@ import {
   buildKboAddressQueryDefault,
   buildContactPointQueryFull,
   buildContactPointQueryDefault,
+  buildKboIdentifierQueryFull,
   buildKboOrgQueryFull,
   buildKboOrgQueryDefault,
   buildUpdateQueryFull,
@@ -25,6 +26,7 @@ const updateSudoStub = sinon.stub();
 const {
   buildKboAddressQuery,
   buildContactPointQuery,
+  buildKboIdentifierQuery,
   buildKboOrgQuery,
   buildUpdateQuery,
   updateKboOrg,
@@ -115,6 +117,21 @@ describe("Queries", () => {
     });
   });
 
+  describe("buildKboIdentifierQuery", () => {
+    it("should return the correct query", () => {
+      const result = buildKboIdentifierQuery(
+        "http://kboIdentifierUri",
+        "kboIdentifierUuid",
+        "http://abbOrgKboIdentifierUri",
+        "0207437468"
+      );
+      assert.strictEqual(
+        normalize(result),
+        normalize(buildKboIdentifierQueryFull)
+      );
+    });
+  });
+
   describe("buildKboOrgQuery", () => {
     it("should return the correct query", () => {
       const result = buildKboOrgQuery(
@@ -132,10 +149,7 @@ describe("Queries", () => {
           activeState: "activeState",
         }
       );
-      assert.strictEqual(
-        normalize(result),
-        normalize(buildKboOrgQueryFull)
-      );
+      assert.strictEqual(normalize(result), normalize(buildKboOrgQueryFull));
     });
 
     it("should return the correct query with empty kboFields", () => {
@@ -147,10 +161,7 @@ describe("Queries", () => {
         "http://abbOrgUri",
         {}
       );
-      assert.strictEqual(
-        normalize(result),
-        normalize(buildKboOrgQueryDefault)
-      );
+      assert.strictEqual(normalize(result), normalize(buildKboOrgQueryDefault));
     });
   });
 
@@ -164,10 +175,7 @@ describe("Queries", () => {
         "<http://mu.semte.ch/graphs/administrative-unit>"
       );
 
-      assert.strictEqual(
-        normalize(result),
-        normalize(buildUpdateQueryFull)
-      );
+      assert.strictEqual(normalize(result), normalize(buildUpdateQueryFull));
     });
     it("should return the correct query when object is undefined", () => {
       const result = buildUpdateQuery(
@@ -178,10 +186,7 @@ describe("Queries", () => {
         "<http://mu.semte.ch/graphs/administrative-unit>"
       );
 
-      assert.strictEqual(
-        normalize(result),
-        normalize(buildUpdateQueryDefault)
-      );
+      assert.strictEqual(normalize(result), normalize(buildUpdateQueryDefault));
     });
   });
 
@@ -226,9 +231,7 @@ describe("Queries", () => {
 
     it("should return the correct query with empty kboFields", async () => {
       await updateKboOrg(
-        {
-
-        },
+        {},
         {
           addressUri: "http://addressUri",
           contactPointUri: "http://contactPointUri",
