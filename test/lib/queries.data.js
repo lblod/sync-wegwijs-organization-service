@@ -76,10 +76,10 @@ DELETE {
 }
 WHERE { 
   VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> } 
-  GRAPH ?g { 
+  GRAPH ?g {
+    BIND (<http://kboOrgUri> AS ?s)
     ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ;
       <http://purl.org/dc/terms/modified> ?o .
-    BIND(<http://kboOrgUri> as ?s) 
   } 
 }
 ;
@@ -90,9 +90,9 @@ INSERT {
 } 
 WHERE { 
   VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> } 
-  GRAPH ?g { 
+  GRAPH ?g {
+    BIND (<http://kboOrgUri> AS ?s) 
     ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> . 
-    BIND(<http://kboOrgUri> as ?s) 
   } 
 }
 `;
@@ -105,10 +105,10 @@ DELETE {
 }
 WHERE { 
   VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> } 
-  GRAPH ?g { 
+  GRAPH ?g {
+    BIND (<http://kboOrgUri> AS ?s) 
     ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ;
       <http://purl.org/dc/terms/modified> ?o .
-    BIND(<http://kboOrgUri> as ?s) 
   } 
 }
 `;
@@ -119,10 +119,10 @@ DELETE {
 } 
 WHERE { 
   VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-  GRAPH ?g { 
+  GRAPH ?g {
+    BIND (<http://addressUri> AS ?s) 
     ?s a <http://www.w3.org/ns/locn#Address> ; 
-      <http://www.w3.org/ns/locn#fullAddress> ?o . 
-    BIND(<http://addressUri> as ?s) } } 
+      <http://www.w3.org/ns/locn#fullAddress> ?o . } } 
 ; 
 INSERT { 
   GRAPH ?g { 
@@ -131,9 +131,9 @@ INSERT {
 } 
 WHERE { 
   VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-  GRAPH ?g { 
+  GRAPH ?g {
+    BIND (<http://addressUri> AS ?s) 
     ?s a <http://www.w3.org/ns/locn#Address> . 
-    BIND(<http://addressUri> as ?s) 
   } 
 }
 `;
@@ -144,10 +144,10 @@ DELETE {
 } 
 WHERE { 
   VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-  GRAPH ?g { 
+  GRAPH ?g {
+    BIND (<http://contactPointUri> AS ?s) 
     ?s a <http://schema.org/ContactPoint> ; 
       <http://schema.org/email> ?o . 
-    BIND(<http://contactPointUri> as ?s) 
   } 
 } 
 ; 
@@ -156,9 +156,9 @@ INSERT {
 } 
 WHERE { 
   VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-  GRAPH ?g { 
+  GRAPH ?g {
+    BIND (<http://contactPointUri> AS ?s) 
     ?s a <http://schema.org/ContactPoint> . 
-    BIND(<http://contactPointUri> as ?s) 
   } 
 } 
 ; 
@@ -167,10 +167,10 @@ DELETE {
 } 
 WHERE { 
   VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-  GRAPH ?g { 
+  GRAPH ?g {
+    BIND (<http://contactPointUri> AS ?s) 
     ?s a <http://schema.org/ContactPoint> ; 
       <http://schema.org/telephone> ?o . 
-      BIND(<http://contactPointUri> as ?s) 
   } 
 } 
 ; 
@@ -179,7 +179,8 @@ INSERT {
 } WHERE { 
   VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
   GRAPH ?g { 
-    ?s a <http://schema.org/ContactPoint> . BIND(<http://contactPointUri> as ?s) 
+    BIND (<http://contactPointUri> AS ?s) 
+    ?s a <http://schema.org/ContactPoint> .
   } 
 } 
 ; 
@@ -188,10 +189,10 @@ DELETE {
 } 
 WHERE { 
   VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-  GRAPH ?g { 
+  GRAPH ?g {
+    BIND (<http://contactPointUri> AS ?s) 
     ?s a <http://schema.org/ContactPoint> ; 
       <http://xmlns.com/foaf/0.1/page> ?o . 
-    BIND(<http://contactPointUri> as ?s) 
   } 
 } 
 ; 
@@ -199,9 +200,9 @@ INSERT {
   GRAPH ?g { ?s <http://xmlns.com/foaf/0.1/page> """https://www.aalst.be""" . } 
 } WHERE { 
   VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-  GRAPH ?g { 
+  GRAPH ?g {
+    BIND (<http://contactPointUri> AS ?s) 
     ?s a <http://schema.org/ContactPoint> . 
-    BIND(<http://contactPointUri> as ?s) 
   } 
 }
 `;
@@ -212,10 +213,10 @@ DELETE {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+        BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
             <http://mu.semte.ch/vocabularies/ext/rechtsvorm> ?o . 
-        BIND(<http://kboOrgUri> as ?s) 
     } 
 } 
 ; 
@@ -224,9 +225,9 @@ INSERT {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+        BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> . 
-        BIND(<http://kboOrgUri> as ?s) 
     } 
 } 
 ; 
@@ -235,10 +236,10 @@ DELETE {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+        BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
             <http://www.w3.org/2004/02/skos/core#altLabel> ?o . 
-            BIND(<http://kboOrgUri> as ?s) 
     } 
 } 
 ; 
@@ -247,9 +248,9 @@ INSERT {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+        BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> . 
-        BIND(<http://kboOrgUri> as ?s) 
     } 
 } 
 ; 
@@ -258,10 +259,10 @@ DELETE {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+        BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
             <http://mu.semte.ch/vocabularies/ext/startDate> ?o . 
-        BIND(<http://kboOrgUri> as ?s) 
     } 
 } 
 ; 
@@ -270,9 +271,9 @@ INSERT {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+        BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> . 
-        BIND(<http://kboOrgUri> as ?s) 
     } 
 } 
 ; 
@@ -281,10 +282,10 @@ DELETE {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+        BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
             <http://www.w3.org/ns/regorg#legalName> ?o . 
-        BIND(<http://kboOrgUri> as ?s) 
     } 
 } 
 ; 
@@ -293,9 +294,9 @@ INSERT {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+        BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> . 
-        BIND(<http://kboOrgUri> as ?s) 
     } 
 } 
 ; 
@@ -304,10 +305,10 @@ DELETE {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+        BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
             <http://purl.org/dc/terms/modified> ?o . 
-        BIND(<http://kboOrgUri> as ?s) 
     } 
 } 
 ; 
@@ -316,9 +317,9 @@ INSERT {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+        BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> . 
-        BIND(<http://kboOrgUri> as ?s) 
     } 
 } 
 ; 
@@ -327,10 +328,10 @@ DELETE {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+        BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
             <http://www.w3.org/ns/regorg#orgStatus> ?o . 
-        BIND(<http://kboOrgUri> as ?s) 
     } 
 } 
 ; 
@@ -339,9 +340,9 @@ INSERT {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+        BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> . 
-        BIND(<http://kboOrgUri> as ?s) 
     }
 }
 `;
@@ -352,10 +353,10 @@ DELETE {
 } 
 WHERE { 
   VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-  GRAPH ?g { 
+  GRAPH ?g {
+    BIND (<http://addressUri> AS ?s) 
     ?s a <http://www.w3.org/ns/locn#Address> ; 
-      <http://www.w3.org/ns/locn#fullAddress> ?o . 
-    BIND(<http://addressUri> as ?s) } } 
+      <http://www.w3.org/ns/locn#fullAddress> ?o . } } 
 `;
 
 export const updateKboOrgDefaultContactPoint = `
@@ -364,10 +365,10 @@ DELETE {
 } 
 WHERE { 
   VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-  GRAPH ?g { 
+  GRAPH ?g {
+    BIND (<http://contactPointUri> AS ?s) 
     ?s a <http://schema.org/ContactPoint> ; 
       <http://schema.org/email> ?o . 
-    BIND(<http://contactPointUri> as ?s) 
   } 
 } 
 ; 
@@ -376,10 +377,10 @@ DELETE {
 } 
 WHERE { 
   VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-  GRAPH ?g { 
+  GRAPH ?g {
+    BIND (<http://contactPointUri> AS ?s) 
     ?s a <http://schema.org/ContactPoint> ; 
       <http://schema.org/telephone> ?o . 
-      BIND(<http://contactPointUri> as ?s) 
   } 
 } 
 ; 
@@ -388,10 +389,10 @@ DELETE {
 } 
 WHERE { 
   VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-  GRAPH ?g { 
+  GRAPH ?g {
+    BIND (<http://contactPointUri> AS ?s) 
     ?s a <http://schema.org/ContactPoint> ; 
       <http://xmlns.com/foaf/0.1/page> ?o . 
-    BIND(<http://contactPointUri> as ?s) 
   } 
 } 
 `;
@@ -402,10 +403,10 @@ DELETE {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+        BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
             <http://mu.semte.ch/vocabularies/ext/rechtsvorm> ?o . 
-        BIND(<http://kboOrgUri> as ?s) 
     } 
 } 
 ; 
@@ -414,10 +415,10 @@ DELETE {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+            BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
             <http://www.w3.org/2004/02/skos/core#altLabel> ?o . 
-            BIND(<http://kboOrgUri> as ?s) 
     } 
 } 
 ; 
@@ -426,10 +427,10 @@ DELETE {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+        BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
             <http://mu.semte.ch/vocabularies/ext/startDate> ?o . 
-        BIND(<http://kboOrgUri> as ?s) 
     } 
 } 
 ; 
@@ -438,10 +439,10 @@ DELETE {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+        BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
             <http://www.w3.org/ns/regorg#legalName> ?o . 
-        BIND(<http://kboOrgUri> as ?s) 
     } 
 } 
 ; 
@@ -450,10 +451,10 @@ DELETE {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+        BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
             <http://purl.org/dc/terms/modified> ?o . 
-        BIND(<http://kboOrgUri> as ?s) 
     } 
 } 
 ; 
@@ -462,10 +463,10 @@ DELETE {
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
-    GRAPH ?g { 
+    GRAPH ?g {
+        BIND (<http://kboOrgUri> AS ?s) 
         ?s a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
             <http://www.w3.org/ns/regorg#orgStatus> ?o . 
-        BIND(<http://kboOrgUri> as ?s) 
     } 
 } 
 `;
