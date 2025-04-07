@@ -43,6 +43,9 @@ const {
       sparqlEscapeString: (str) => {
         return `"""${str}"""`;
       },
+      sparqlEscapeDate: (date) => {
+        return `"${date}"^^xsd:date`;
+      },
     },
     "@lblod/mu-auth-sudo": {
       querySudo: querySudoStub,
@@ -146,7 +149,7 @@ describe("Queries", () => {
           formalName: "formalName",
           shortName: "shortName",
           changeTime: "2024-01-01",
-          activeState: "activeState",
+          activeState: "http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6",
         }
       );
       assert.strictEqual(normalize(result), normalize(buildKboOrgQueryFull));
@@ -172,6 +175,7 @@ describe("Queries", () => {
         "http://mu.semte.ch/vocabularies/ext/KboOrganisatie",
         "http://purl.org/dc/terms/modified",
         "2024-01-01",
+        "date",
         "<http://mu.semte.ch/graphs/administrative-unit>"
       );
 
@@ -183,6 +187,7 @@ describe("Queries", () => {
         "http://mu.semte.ch/vocabularies/ext/KboOrganisatie",
         "http://purl.org/dc/terms/modified",
         undefined,
+        "date",
         "<http://mu.semte.ch/graphs/administrative-unit>"
       );
 
@@ -200,7 +205,7 @@ describe("Queries", () => {
           kboNumber: "0207437468",
           formalName: "Stad Aalst",
           startDate: "1968-01-01",
-          activeState: "active",
+          activeState: "http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6",
           rechtsvorm: "Stad/Gemeente",
           email: "info@aalst.be",
           phone: "053 77 93 00",

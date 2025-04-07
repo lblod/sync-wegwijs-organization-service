@@ -10,7 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@lblod/mu-auth-sudo": "^0.6.1",
+    "@lblod/mu-auth-sudo": "^0.6.2",
     "cron": "^3.0.0",
     "node-fetch": "^2.6.1"
   },

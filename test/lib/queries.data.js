@@ -47,16 +47,16 @@ export const buildKboIdentifierQueryFull = `
 export const buildKboOrgQueryFull = `
 <http://kboOrgUri> a <http://mu.semte.ch/vocabularies/ext/KboOrganisatie> ; 
     <http://mu.semte.ch/vocabularies/core/uuid> """kboOrgUuid""" ;
-    <http://purl.org/dc/terms/source> <https://economie.fgov.be/> ; 
-    <http://www.w3.org/2002/07/owl#sameAs> <http://abbOrgUri> ; 
-    <http://schema.org/contactPoint> <http://contactPointUri> ; 
-    <http://www.w3.org/ns/adms#identifier> <http://kboIdentifierUri> ; 
-    <http://mu.semte.ch/vocabularies/ext/rechtsvorm> """Stad / gemeente""" ; 
-    <http://mu.semte.ch/vocabularies/ext/startDate> """1968-01-01""" ; 
-    <http://www.w3.org/ns/regorg#legalName> """formalName""" ; 
-    <http://www.w3.org/2004/02/skos/core#altLabel> """shortName""" ; 
-    <http://purl.org/dc/terms/modified> """2024-01-01""" ; 
-    <http://www.w3.org/ns/regorg#orgStatus> <activeState> .
+    <http://purl.org/dc/terms/source> <https://economie.fgov.be/> ;
+    <http://www.w3.org/2002/07/owl#sameAs> <http://abbOrgUri> ;
+    <http://schema.org/contactPoint> <http://contactPointUri> ;
+    <http://www.w3.org/ns/adms#identifier> <http://kboIdentifierUri> ;
+    <http://mu.semte.ch/vocabularies/ext/rechtsvorm> """Stad / gemeente""" ;
+    <http://mu.semte.ch/vocabularies/ext/startDate> "1968-01-01"^^xsd:date ;
+    <http://www.w3.org/ns/regorg#legalName> """formalName""" ;
+    <http://www.w3.org/2004/02/skos/core#altLabel> """shortName""" ;
+    <http://purl.org/dc/terms/modified> "2024-01-01"^^xsd:date ;
+    <http://www.w3.org/ns/regorg#orgStatus> <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6> .
 `;
 
 export const buildKboOrgQueryDefault = `
@@ -85,7 +85,7 @@ WHERE {
 ;
 INSERT { 
   GRAPH ?g { 
-    ?s <http://purl.org/dc/terms/modified> """2024-01-01""" . 
+    ?s <http://purl.org/dc/terms/modified> "2024-01-01"^^xsd:date . 
   } 
 } 
 WHERE { 
@@ -267,7 +267,7 @@ WHERE {
 } 
 ; 
 INSERT { 
-    GRAPH ?g { ?s <http://mu.semte.ch/vocabularies/ext/startDate> """1968-01-01""" . } 
+    GRAPH ?g { ?s <http://mu.semte.ch/vocabularies/ext/startDate> "1968-01-01"^^xsd:date . } 
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
@@ -313,7 +313,7 @@ WHERE {
 } 
 ; 
 INSERT { 
-    GRAPH ?g { ?s <http://purl.org/dc/terms/modified> """2023-11-15""" . } 
+    GRAPH ?g { ?s <http://purl.org/dc/terms/modified> "2023-11-15"^^xsd:date . } 
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
@@ -336,7 +336,7 @@ WHERE {
 } 
 ; 
 INSERT { 
-    GRAPH ?g { ?s <http://www.w3.org/ns/regorg#orgStatus> """active""" . } 
+    GRAPH ?g { ?s <http://www.w3.org/ns/regorg#orgStatus> <http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6> . } 
 } 
 WHERE { 
     VALUES ?g { <http://mu.semte.ch/graphs/administrative-unit> <http://mu.semte.ch/graphs/worship-service> } 
