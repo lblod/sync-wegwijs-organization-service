@@ -24,6 +24,7 @@ const updateSudoStub = sinon.stub();
 
 // Stub `mu-auth-sudo` module and `mu` module part of `mu-semtech/mu-javascript-template` microservice
 const {
+  dataValueType,
   buildKboAddressQuery,
   buildContactPointQuery,
   buildKboIdentifierQuery,
@@ -171,24 +172,24 @@ describe("Queries", () => {
   describe("buildUpdateQuery", () => {
     it("should return the correct query", () => {
       const result = buildUpdateQuery(
+        "<http://mu.semte.ch/graphs/administrative-unit>",
         "http://kboOrgUri",
         "http://mu.semte.ch/vocabularies/ext/KboOrganisatie",
         "http://purl.org/dc/terms/modified",
         "2024-01-01",
-        "date",
-        "<http://mu.semte.ch/graphs/administrative-unit>"
+        dataValueType.DATE
       );
 
       assert.strictEqual(normalize(result), normalize(buildUpdateQueryFull));
     });
     it("should return the correct query when object is undefined", () => {
       const result = buildUpdateQuery(
+        "<http://mu.semte.ch/graphs/administrative-unit>",
         "http://kboOrgUri",
         "http://mu.semte.ch/vocabularies/ext/KboOrganisatie",
         "http://purl.org/dc/terms/modified",
         undefined,
-        "date",
-        "<http://mu.semte.ch/graphs/administrative-unit>"
+        dataValueType.DATE
       );
 
       assert.strictEqual(normalize(result), normalize(buildUpdateQueryDefault));
