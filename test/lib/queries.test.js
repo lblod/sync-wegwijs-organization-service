@@ -24,6 +24,7 @@ const updateSudoStub = sinon.stub();
 
 // Stub `mu-auth-sudo` module and `mu` module part of `mu-semtech/mu-javascript-template` microservice
 const {
+  dataValueType,
   buildKboAddressQuery,
   buildContactPointQuery,
   buildKboIdentifierQuery,
@@ -42,6 +43,9 @@ const {
       },
       sparqlEscapeString: (str) => {
         return `"""${str}"""`;
+      },
+      sparqlEscapeDate: (date) => {
+        return `"${date}"^^xsd:date`;
       },
     },
     "@lblod/mu-auth-sudo": {
@@ -146,7 +150,7 @@ describe("Queries", () => {
           formalName: "formalName",
           shortName: "shortName",
           changeTime: "2024-01-01",
-          activeState: "activeState",
+          activeState: "http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6",
         }
       );
       assert.strictEqual(normalize(result), normalize(buildKboOrgQueryFull));
@@ -168,22 +172,24 @@ describe("Queries", () => {
   describe("buildUpdateQuery", () => {
     it("should return the correct query", () => {
       const result = buildUpdateQuery(
+        "<http://mu.semte.ch/graphs/administrative-unit>",
         "http://kboOrgUri",
         "http://mu.semte.ch/vocabularies/ext/KboOrganisatie",
         "http://purl.org/dc/terms/modified",
         "2024-01-01",
-        "<http://mu.semte.ch/graphs/administrative-unit>"
+        dataValueType.DATE
       );
 
       assert.strictEqual(normalize(result), normalize(buildUpdateQueryFull));
     });
     it("should return the correct query when object is undefined", () => {
       const result = buildUpdateQuery(
+        "<http://mu.semte.ch/graphs/administrative-unit>",
         "http://kboOrgUri",
         "http://mu.semte.ch/vocabularies/ext/KboOrganisatie",
         "http://purl.org/dc/terms/modified",
         undefined,
-        "<http://mu.semte.ch/graphs/administrative-unit>"
+        dataValueType.DATE
       );
 
       assert.strictEqual(normalize(result), normalize(buildUpdateQueryDefault));
@@ -200,7 +206,7 @@ describe("Queries", () => {
           kboNumber: "0207437468",
           formalName: "Stad Aalst",
           startDate: "1968-01-01",
-          activeState: "active",
+          activeState: "http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6",
           rechtsvorm: "Stad/Gemeente",
           email: "info@aalst.be",
           phone: "053 77 93 00",
