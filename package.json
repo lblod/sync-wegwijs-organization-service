@@ -1,6 +1,6 @@
 {
   "name": "sync-ovo-numbers-service",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Syncs data with Wegwijs API based on KBOs",
   "author": "redpencil.io",
   "license": "MIT",
