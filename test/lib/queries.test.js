@@ -200,7 +200,7 @@ describe("Queries", () => {
     it("should return the correct query", async () => {
       await updateKboOrg(
         {
-          changeTime: "2023-11-15",
+          changeTime: "2023-11-15T00:00:00",
           shortName: "Aalst",
           ovoNumber: "OVO001992",
           kboNumber: "0207437468",
