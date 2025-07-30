@@ -44,8 +44,8 @@ const {
       sparqlEscapeString: (str) => {
         return `"""${str}"""`;
       },
-      sparqlEscapeDate: (date) => {
-        return `"${date}"^^xsd:date`;
+      sparqlEscapeDateTime: (dateTime) => {
+        return `"${dateTime}"^^xsd:dateTime`;
       },
     },
     "@lblod/mu-auth-sudo": {
@@ -176,8 +176,8 @@ describe("Queries", () => {
         "http://kboOrgUri",
         "http://mu.semte.ch/vocabularies/ext/KboOrganisatie",
         "http://purl.org/dc/terms/modified",
-        "2024-01-01",
-        dataValueType.DATE
+        "2024-01-01T00:00:00",
+        dataValueType.DATETIME
       );
 
       assert.strictEqual(normalize(result), normalize(buildUpdateQueryFull));
@@ -189,7 +189,7 @@ describe("Queries", () => {
         "http://mu.semte.ch/vocabularies/ext/KboOrganisatie",
         "http://purl.org/dc/terms/modified",
         undefined,
-        dataValueType.DATE
+        dataValueType.DATETIME
       );
 
       assert.strictEqual(normalize(result), normalize(buildUpdateQueryDefault));
