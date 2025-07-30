@@ -146,10 +146,10 @@ describe("Queries", () => {
         "http://abbOrgUri",
         {
           rechtsvorm: "Stad / gemeente",
-          startDate: "1968-01-01",
+          startDate: "1968-01-01T00:00:00",
           formalName: "formalName",
           shortName: "shortName",
-          changeTime: "2024-01-01",
+          changeTime: "2024-01-01T00:00:00",
           activeState: "http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6",
         }
       );
@@ -205,7 +205,7 @@ describe("Queries", () => {
           ovoNumber: "OVO001992",
           kboNumber: "0207437468",
           formalName: "Stad Aalst",
-          startDate: "1968-01-01",
+          startDate: "1968-01-01T00:00:00",
           activeState: "http://lblod.data.gift/concepts/63cc561de9188d64ba5840a42ae8f0d6",
           rechtsvorm: "Stad/Gemeente",
           email: "info@aalst.be",
